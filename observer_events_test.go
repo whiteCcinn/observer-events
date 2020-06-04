@@ -1,15 +1,12 @@
-# observer-events
-🌈This is an observer mode based event component, similar to the events module in PHP's laravel framework
+package observer_events_test
 
-# How to install
-
-```shell
-go get github.com/whiteCcinn/observer-events
-```
-
-# How To Use
-
-```go
+import (
+	"errors"
+	"fmt"
+	"github.com/stretchr/testify/assert"
+	observerEvents "github.com/whiteCcinn/observer-events"
+	"testing"
+)
 
 type MyEvent struct {
 	eventName string
@@ -180,4 +177,3 @@ func TestEventListenerCount(t *testing.T) {
 	assert.Equal(t, 2, count)
 }
 
-```
