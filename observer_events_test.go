@@ -14,15 +14,15 @@ type MyEvent struct {
 	age       int
 }
 
-func (e *MyEvent) GetEventName() string {
+func (e MyEvent) GetEventName() string {
 	return e.eventName
 }
 
 type MyListener struct {
 }
 
-func (l *MyListener) Handle(event interface{}) {
-	if myEvent, ok := event.(*MyEvent); ok {
+func (l MyListener) Handle(event interface{}) {
+	if myEvent, ok := event.(MyEvent); ok {
 		fmt.Println(fmt.Sprintf("MyListener>> name:%s, age:%d", myEvent.name, myEvent.age))
 	}
 }
@@ -30,14 +30,14 @@ func (l *MyListener) Handle(event interface{}) {
 type MyListener2 struct {
 }
 
-func (l *MyListener2) Handle(event interface{}) {
-	if myEvent, ok := event.(*MyEvent); ok {
+func (l MyListener2) Handle(event interface{}) {
+	if myEvent, ok := event.(MyEvent); ok {
 		fmt.Println(fmt.Sprintf("MyListener2>> name:%s, age:%d", myEvent.name, myEvent.age))
 	}
 }
 
 func TestEvent(t *testing.T) {
-	event := &MyEvent{"test_event", "ccinn", 18}
+	event := MyEvent{"test_event", "ccinn", 18}
 	err := observerEvents.Event(event)
 
 	assert.NotNil(t, err)
@@ -45,15 +45,15 @@ func TestEvent(t *testing.T) {
 
 func TestSubscribe(t *testing.T) {
 
-	event := &MyEvent{"test_event", "ccinn", 18}
+	event := MyEvent{"test_event", "ccinn", 18}
 
-	listener := &MyListener{}
+	listener := MyListener{}
 
 	err := observerEvents.Subscribe(event, listener)
 
 	assert.Nil(t, err)
 
-	listener2 := &MyListener2{}
+	listener2 := MyListener2{}
 
 	err = observerEvents.Subscribe(event, listener2)
 
@@ -70,15 +70,15 @@ func TestSubscribe(t *testing.T) {
 
 func TestClearEvents(t *testing.T) {
 
-	event := &MyEvent{"test_event", "ccinn", 18}
+	event := MyEvent{"test_event", "ccinn", 18}
 
-	listener := &MyListener{}
+	listener := MyListener{}
 
 	err := observerEvents.Subscribe(event, listener)
 
 	assert.Nil(t, err)
 
-	listener2 := &MyListener2{}
+	listener2 := MyListener2{}
 
 	err = observerEvents.Subscribe(event, listener2)
 
@@ -91,15 +91,15 @@ func TestClearEvents(t *testing.T) {
 
 func TestClearEvent(t *testing.T) {
 
-	event := &MyEvent{"test_event", "ccinn", 18}
+	event := MyEvent{"test_event", "ccinn", 18}
 
-	listener := &MyListener{}
+	listener := MyListener{}
 
 	err := observerEvents.Subscribe(event, listener)
 
 	assert.Nil(t, err)
 
-	listener2 := &MyListener2{}
+	listener2 := MyListener2{}
 
 	err = observerEvents.Subscribe(event, listener2)
 
@@ -112,15 +112,15 @@ func TestClearEvent(t *testing.T) {
 
 func TestEventNames(t *testing.T) {
 
-	event := &MyEvent{"test_event", "ccinn", 18}
+	event := MyEvent{"test_event", "ccinn", 18}
 
-	listener := &MyListener{}
+	listener := MyListener{}
 
 	err := observerEvents.Subscribe(event, listener)
 
 	assert.Nil(t, err)
 
-	listener2 := &MyListener2{}
+	listener2 := MyListener2{}
 
 	err = observerEvents.Subscribe(event, listener2)
 
@@ -135,15 +135,15 @@ func TestEventNames(t *testing.T) {
 
 func TestHasEvents(t *testing.T) {
 
-	event := &MyEvent{"test_event", "ccinn", 18}
+	event := MyEvent{"test_event", "ccinn", 18}
 
-	listener := &MyListener{}
+	listener := MyListener{}
 
 	err := observerEvents.Subscribe(event, listener)
 
 	assert.Nil(t, err)
 
-	listener2 := &MyListener2{}
+	listener2 := MyListener2{}
 
 	err = observerEvents.Subscribe(event, listener2)
 
@@ -157,15 +157,15 @@ func TestHasEvents(t *testing.T) {
 
 func TestEventListenerCount(t *testing.T) {
 
-	event := &MyEvent{"test_event", "ccinn", 18}
+	event := MyEvent{"test_event", "ccinn", 18}
 
-	listener := &MyListener{}
+	listener := MyListener{}
 
 	err := observerEvents.Subscribe(event, listener)
 
 	assert.Nil(t, err)
 
-	listener2 := &MyListener2{}
+	listener2 := MyListener2{}
 
 	err = observerEvents.Subscribe(event, listener2)
 

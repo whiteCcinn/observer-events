@@ -49,7 +49,7 @@ type MyEvent struct {
 	age       int
 }
 
-func (e *MyEvent) GetEventName() string {
+func (e MyEvent) GetEventName() string {
 	return e.eventName
 }
 
@@ -129,7 +129,7 @@ func EventBlock(event interface{}) error {
 ## Usage 
 
 ```go
-event := &MyEvent{"test_event", "ccinn", 18}
+event := MyEvent{"test_event", "ccinn", 18}
 
 listener := &MyListener{}
 
