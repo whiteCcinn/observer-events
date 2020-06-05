@@ -129,17 +129,17 @@ func EventBlock(event interface{}) error {
 ## Usage 
 
 ```go
-	event := &MyEvent{"test_event", "ccinn", 18}
+event := &MyEvent{"test_event", "ccinn", 18}
 
-	listener := &MyListener{}
+listener := &MyListener{}
 
-	err := observerEvents.Subscribe(event, listener)
+err := observerEvents.Subscribe(event, listener)
 
-	listener2 := &MyListener2{}
+listener2 := &MyListener2{}
 
-    err = observerEvents.Subscribe(event, listener)
+err = observerEvents.Subscribe(event, listener)
 
-	err = observerEvents.Event(event)
+err = observerEvents.Event(event)
 ```
 
 Output:
