@@ -9,7 +9,39 @@ go get github.com/whiteCcinn/observer-events
 
 # How To Use
 
+## Event
+
+We need to implement our own event, which needs to implement the interface `IBaseEvent`
+And you need to implement the method `GetEventName()`, which requires the output event name
+
+For example:
+
 ```go
+package main
+
+type MyEvent struct {
+	eventName string
+	name      string
+	age       int
+}
+
+func (e *MyEvent) GetEventName() string {
+	return e.eventName
+}
+```
+
+## Listener
+
+When we want to observe an event through a Listener to trigger the observer's behavior, we need to define our own Listener. 
+This requires us to implement the interface `IListener`, which has an interface method `Handle(Event interface{})`, which will receive the event object
+you can display the transformation of your custom events through the`.(Event)` syntax
+
+For example:
+
+```go
+package main
+
+import "fmt"
 
 type MyEvent struct {
 	eventName string
@@ -38,146 +70,58 @@ func (l *MyListener2) Handle(event interface{}) {
 		fmt.Println(fmt.Sprintf("MyListener2>> name:%s, age:%d", myEvent.name, myEvent.age))
 	}
 }
+```
 
-func TestEvent(t *testing.T) {
-	event := &MyEvent{"test_event", "ccinn", 18}
-	err := observerEvents.Event(event)
+## Subscriber
 
-	assert.NotNil(t, err)
-}
+The subscriber will be the core processing structure of our entire behavior
+It provides a number of apis。
 
-func TestSubscribe(t *testing.T) {
+```go
+type ISubscriber interface {
+	// A method to bind an Event and a Listener
+	// If a listener is already present in the event, it is added to the queue
+	Subscriber(event interface{}, listener interface{}) error
+	// Triggering event
+	Fire(event interface{}) error
+	// Triggers the event as a block
+	FireBlock(event interface{}) error
+	// Clear all events
+	ClearEvents()
+	// Clear a specific event
+	ClearEvent(event interface{}) error
+	// Return all event's name
+	EventNames() []string
+	// Is there an event
+	HasEvents(event interface{}) (bool, error)
+	// Return Amount of events
+	EventCount() int
+	// Returns the number of listeners for a specific event
+	EventListenerCount(event interface{}) (int, error)
+```
 
-	event := &MyEvent{"test_event", "ccinn", 18}
+You can instantiate your own subscribers using the global subscriber or the `NewSubscriber()`
 
-	listener := &MyListener{}
+Global method `Event(Event Interface {}) = Fire(Event)`, `EventBlock(Event Interface {}) = FireBlock(Event)`
 
-	err := observerEvents.Subscribe(event, listener)
+```go
+func Event(event interface{}) error {
+	ok := checkIsEvent(event)
 
-	assert.Nil(t, err)
-
-	listener2 := &MyListener2{}
-
-	err = observerEvents.Subscribe(event, listener2)
-
-	assert.Nil(t, err)
-
-	err = observerEvents.Event(event)
-
-	assert.Nil(t, err)
-
-	err = observerEvents.EventBlock(event)
-
-	assert.Nil(t, err)
-}
-
-func TestClearEvents(t *testing.T) {
-
-	event := &MyEvent{"test_event", "ccinn", 18}
-
-	listener := &MyListener{}
-
-	err := observerEvents.Subscribe(event, listener)
-
-	assert.Nil(t, err)
-
-	listener2 := &MyListener2{}
-
-	err = observerEvents.Subscribe(event, listener2)
-
-	observerEvents.ClearEvents()
-
-	if observerEvents.EventCount() != 0 {
-		assert.Error(t, errors.New("clear events after is not empty"))
+	if !ok {
+		return errors.New("event must be implement IBaseEvent")
 	}
+
+	return globalSubscriber.Fire(event)
 }
 
-func TestClearEvent(t *testing.T) {
+func EventBlock(event interface{}) error {
+	ok := checkIsEvent(event)
 
-	event := &MyEvent{"test_event", "ccinn", 18}
-
-	listener := &MyListener{}
-
-	err := observerEvents.Subscribe(event, listener)
-
-	assert.Nil(t, err)
-
-	listener2 := &MyListener2{}
-
-	err = observerEvents.Subscribe(event, listener2)
-
-	assert.Nil(t, err)
-
-	err = observerEvents.ClearEvent(event)
-
-	assert.Nil(t, err)
-}
-
-func TestEventNames(t *testing.T) {
-
-	event := &MyEvent{"test_event", "ccinn", 18}
-
-	listener := &MyListener{}
-
-	err := observerEvents.Subscribe(event, listener)
-
-	assert.Nil(t, err)
-
-	listener2 := &MyListener2{}
-
-	err = observerEvents.Subscribe(event, listener2)
-
-	assert.Nil(t, err)
-
-	names := observerEvents.EventNames()
-
-	if len(names) != 1 {
-		assert.Error(t, errors.New("error"))
+	if !ok {
+		return errors.New("event must be implement IBaseEvent")
 	}
+
+	return globalSubscriber.FireBlock(event)
 }
-
-func TestHasEvents(t *testing.T) {
-
-	event := &MyEvent{"test_event", "ccinn", 18}
-
-	listener := &MyListener{}
-
-	err := observerEvents.Subscribe(event, listener)
-
-	assert.Nil(t, err)
-
-	listener2 := &MyListener2{}
-
-	err = observerEvents.Subscribe(event, listener2)
-
-	assert.Nil(t, err)
-
-	has, err := observerEvents.HasEvents(event)
-
-	assert.Nil(t, err)
-	assert.Equal(t, true, has)
-}
-
-func TestEventListenerCount(t *testing.T) {
-
-	event := &MyEvent{"test_event", "ccinn", 18}
-
-	listener := &MyListener{}
-
-	err := observerEvents.Subscribe(event, listener)
-
-	assert.Nil(t, err)
-
-	listener2 := &MyListener2{}
-
-	err = observerEvents.Subscribe(event, listener2)
-
-	assert.Nil(t, err)
-
-	count, err := observerEvents.EventListenerCount(event)
-
-	assert.Nil(t, err)
-	assert.Equal(t, 2, count)
-}
-
 ```
