@@ -125,3 +125,26 @@ func EventBlock(event interface{}) error {
 	return globalSubscriber.FireBlock(event)
 }
 ```
+
+## Usage 
+
+```go
+	event := &MyEvent{"test_event", "ccinn", 18}
+
+	listener := &MyListener{}
+
+	err := observerEvents.Subscribe(event, listener)
+
+	listener2 := &MyListener2{}
+
+    err = observerEvents.Subscribe(event, listener)
+
+	err = observerEvents.Event(event)
+```
+
+Output:
+
+```go
+MyListener>> name:ccinn, age:18
+MyListener2>> name:ccinn, age:18
+```
