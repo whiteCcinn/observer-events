@@ -40,7 +40,7 @@ func (s *Subscriber) Subscriber(event interface{}, listener interface{}) error {
 	return nil
 }
 
-func (s *Subscriber) DeclareSubscriber(eventName string, listener interface{}) error {
+func (s *Subscriber) DeclareSubscriber(eventName string, listener interface{}) {
 
 	listeners, ok := s.EventListeners.Load(eventName)
 
@@ -53,8 +53,6 @@ func (s *Subscriber) DeclareSubscriber(eventName string, listener interface{}) e
 	}
 
 	s.EventListeners.Store(eventName, listenersList)
-
-	return nil
 }
 
 // Triggering event

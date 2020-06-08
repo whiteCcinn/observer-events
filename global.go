@@ -16,7 +16,7 @@ type ISubscriber interface {
 	// A method to bind an Event and a Listener
 	// If a listener is already present in the event, it is added to the queue
 	Subscriber(event interface{}, listener interface{}) error
-	DeclareSubscriber(eventName string, listener interface{}) error
+	DeclareSubscriber(eventName string, listener interface{})
 	// Triggering event
 	Fire(event interface{}) error
 	// Triggers the event as a block
@@ -85,6 +85,6 @@ func EventListenerCount(event interface{}) (int, error) {
 	return globalSubscriber.EventListenerCount(event)
 }
 
-func DeclareSubscriber(eventName string, listener interface{}) error {
-	return globalSubscriber.DeclareSubscriber(eventName, listener)
+func DeclareSubscriber(eventName string, listener interface{}) {
+	globalSubscriber.DeclareSubscriber(eventName, listener)
 }
