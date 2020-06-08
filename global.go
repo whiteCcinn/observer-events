@@ -84,3 +84,7 @@ func EventCount() int {
 func EventListenerCount(event interface{}) (int, error) {
 	return globalSubscriber.EventListenerCount(event)
 }
+
+func DeclareSubscriber(eventName string, listener interface{}) error {
+	return globalSubscriber.DeclareSubscriber(eventName, listener)
+}
