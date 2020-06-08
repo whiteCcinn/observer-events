@@ -40,6 +40,23 @@ func (s *Subscriber) Subscriber(event interface{}, listener interface{}) error {
 	return nil
 }
 
+func (s *Subscriber) DeclareSubscriber(eventName string, listener interface{}) error {
+
+	listeners, ok := s.EventListeners.Load(eventName)
+
+	var listenersList []IListener
+
+	if ok {
+		listenersList = append(listeners.([]IListener), listener.(IListener))
+	} else {
+		listenersList = append(listenersList, listener.(IListener))
+	}
+
+	s.EventListeners.Store(eventName, listenersList)
+
+	return nil
+}
+
 // Triggering event
 func (s *Subscriber) Fire(event interface{}) error {
 	has, err := s.HasEvents(event)
