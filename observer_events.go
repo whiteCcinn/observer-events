@@ -8,6 +8,8 @@ import (
 type Subscriber struct {
 	// [event => [listener.handle]]
 	EventListeners sync.Map
+
+	mutex sync.Mutex
 }
 
 // A method to bind an Event and a Listener
@@ -67,6 +69,7 @@ func (s *Subscriber) Fire(event interface{}) error {
 
 	if ok {
 		wg := sync.WaitGroup{}
+		s.mutex.Lock()
 		for _, listener := range listeners.([]IListener) {
 			wg.Add(1)
 			go func(handler IListener) {
@@ -74,6 +77,7 @@ func (s *Subscriber) Fire(event interface{}) error {
 				handler.Handle(event)
 			}(listener)
 		}
+		s.mutex.Unlock()
 		wg.Wait()
 	} else {
 		return errors.New(" There are no listeners ")
@@ -93,9 +97,11 @@ func (s *Subscriber) FireBlock(event interface{}) error {
 	listeners, ok := s.EventListeners.Load(event.(IBaseEvent).GetEventName())
 
 	if ok {
+		s.mutex.Lock()
 		for _, listener := range listeners.([]IListener) {
 			listener.Handle(event)
 		}
+		s.mutex.Unlock()
 	} else {
 		return errors.New(" There are no listeners ")
 	}
